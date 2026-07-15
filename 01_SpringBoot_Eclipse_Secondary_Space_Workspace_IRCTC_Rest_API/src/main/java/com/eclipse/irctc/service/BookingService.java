@@ -62,7 +62,9 @@ public class BookingService {
 		        bookingResponse.setDestination(savedBooking.getDestination());
 		        bookingResponse.setPnrNumber(savedBooking.getPnrNumber());
 		        bookingResponse.setBookingStatus(savedBooking.getPnrStatus());
-
+		        
+		        System.out.println("Just addong something");
+		        
 		        return bookingResponse;
 		    }
 	
