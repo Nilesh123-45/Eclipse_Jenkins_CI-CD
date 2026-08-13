@@ -4,19 +4,17 @@ server:
 spring:
   application:
     name: 01-Spring-Boot-Product-Category-API_Gateway
-
   data:
     redis:
       host: localhost
       port: 6379
-
   cloud:
     gateway:
       routes:
         - id: product-category-route
           uri: lb://01-Spring-Boot-Product-Category-Booking
           predicates:
-            # This matches your exact @RequestMapping path
+          # This matches My exact @RequestMapping path
             - Path=/sellerManager/api/v1.4/**
           filters:
             - name: RequestRateLimiter
@@ -32,3 +30,18 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     fetch-registry: true
     register-with-eureka: true
+
+# ---------------- Distributed Tracing & Zipkin ----------------
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+# ---------------- Console Logging Pattern ----------------
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
