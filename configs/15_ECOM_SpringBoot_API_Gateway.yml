@@ -44,7 +44,6 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 
-spring.config.import: optional:configserver:http://localhost:8888
 
 # ---------------- Distributed Tracing & Zipkin ----------------
 management:
