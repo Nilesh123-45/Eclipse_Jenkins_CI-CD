@@ -1,0 +1,66 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: 15_ECOM_SpringBoot_API_Gateway
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cloud:
+    gateway:
+      routes:
+        - id: product-service-route
+          uri: lb://15_E_commerce_ProductService
+          predicates:
+            # Matches your actual ProductController base path
+            - Path=/api/products/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@ipKeyResolver}"
+
+        # ---- Add one block like this per future service ----
+        # - id: order-service-route
+        #   uri: lb://order-service
+        #   predicates:
+        #     - Path=/api/orders/**
+        #   filters:
+        #     - name: RequestRateLimiter
+        #       args:
+        #         redis-rate-limiter.replenishRate: 5
+        #         redis-rate-limiter.burstCapacity: 10
+        #         redis-rate-limiter.requestedTokens: 1
+        #         key-resolver: "#{@ipKeyResolver}"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+spring.config.import: optional:configserver:http://localhost:8888
+
+# ---------------- Distributed Tracing & Zipkin ----------------
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+
+# ---------------- Console Logging Pattern (traceId/spanId visible per line) ----------------
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
