@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: 15_ECOM_SpringBoot_API_Gateway
+    name: ecommerce-api-gateway
 
   data:
     redis:
@@ -18,7 +18,7 @@ spring:
           routes:
 
             - id: product-service-route
-              uri: lb://15_E_commerce_ProductService
+              uri: lb://ecommerce-product-service
               predicates:
                 # Matches your actual ProductController base path
                 - Path=/api/products/**
@@ -32,7 +32,7 @@ spring:
 
 
             - id: cart-service-route
-              uri: lb://15_E_commerce_Cart_Service
+              uri: lb://ecommerce-cart-service
               predicates:
                 - Path=/api/cart/**
               filters:
